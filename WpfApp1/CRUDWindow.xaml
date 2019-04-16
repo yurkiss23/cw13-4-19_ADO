@@ -1,0 +1,44 @@
+﻿<Window x:Class="WpfApp1.CRUDWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="CRUDWindow" Height="370" Width="855">
+    <Grid>
+        <DataGrid x:Name="myDT" HorizontalAlignment="Left" Height="319" Margin="293,10,0,0"
+                  VerticalAlignment="Top" Width="544" Loaded="MyDT_Loaded" SelectionChanged="MyDT_SelectionChanged"/>
+        <Label Content="USER_ID" HorizontalAlignment="Left" Margin="30,34,0,0" VerticalAlignment="Top" IsEnabled="False"/>
+        <Label Content="LASTNAME" HorizontalAlignment="Left" Margin="30,71,0,0" VerticalAlignment="Top"/>
+        <Label Content="FIRSTNAME" HorizontalAlignment="Left" Margin="30,105,0,0" VerticalAlignment="Top"/>
+        <Label Content="E-MAIL" HorizontalAlignment="Left" Margin="30,135,0,0" VerticalAlignment="Top"/>
+        <Label Content="PASSWORD" HorizontalAlignment="Left" Margin="31,173,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="user_id_txtbx" HorizontalAlignment="Left" Height="23" Margin="142,38,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                 IsEnabled="False"/>
+        <TextBox x:Name="lastname_txtbx" HorizontalAlignment="Left" Height="23" Margin="142,71,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                 TextChanged="Lastname_txtbx_TextChanged"/>
+        <TextBox x:Name="firstname_txtbx" HorizontalAlignment="Left" Height="23" Margin="142,105,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                 TextChanged="Firstname_txtbx_TextChanged"/>
+        <TextBox x:Name="email_txtbx" HorizontalAlignment="Left" Height="23" Margin="142,139,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                 TextChanged="Email_txtbx_TextChanged"/>
+        <TextBox x:Name="password_txtbx" HorizontalAlignment="Left" Height="23" Margin="142,173,0,0"
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
+                 TextChanged="Password_txtbx_TextChanged"/>
+        <GroupBox Header="Users Information" HorizontalAlignment="Left" Height="202" Margin="10,10,0,0"
+                  VerticalAlignment="Top" Width="278"/>
+        <Button x:Name="add_btn" Content="Add" HorizontalAlignment="Left" Margin="10,217,0,0"
+                VerticalAlignment="Top" Width="75" Click="Add_btn_Click" IsEnabled="False"/>
+        <Button x:Name="update_btn" Content="Update" HorizontalAlignment="Left" Margin="90,217,0,0"
+                VerticalAlignment="Top" Width="118" IsEnabled="False" Click="Update_btn_Click"/>
+        <Button x:Name="delete_btn" Content="Delete" HorizontalAlignment="Left" Margin="213,217,0,0"
+                VerticalAlignment="Top" Width="75" IsEnabled="False" Click="Delete_btn_Click"/>
+        <Button x:Name="resete_btn" Content="Reset" HorizontalAlignment="Left" Margin="90,242,0,0"
+                VerticalAlignment="Top" Width="118" Click="Resete_btn_Click"/>
+
+    </Grid>
+</Window>
