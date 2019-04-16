@@ -28,7 +28,7 @@ namespace WpfApp1
         public string conStr = ConfigurationManager.AppSettings["conStr"];
         private void updateDT()
         {
-            List<UserModel> userList = null;// _context
+            //List<UserModel> userList = null;// _context
                                             //.Users.Select(u => new UserModel
                                             //{
                                             //    Id = u.Id,
@@ -66,7 +66,6 @@ namespace WpfApp1
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    //string query = $"";
                     using (SqlConnection connect = new SqlConnection(conStr))
                     {
                         connect.Open();
@@ -74,21 +73,17 @@ namespace WpfApp1
                         cmd.Connection = connect;
                         cmd.CommandText = $"SELECT [Id],[FirstName],[LastName],[Email],[Password]FROM[yurkissdb].[dbo].[CRUD_Users]";
                         SqlDataReader rdr = cmd.ExecuteReader();
-                        MessageBox.Show(rdr.ToString());
-                        if (rdr.Read())
+                        while (rdr.Read())
                         {
-                            MessageBox.Show(rdr.ToString());
-                            foreach (var user in userList)
-                            {
-                                DataRow row = dt.NewRow();
-                                row[0] = user.Id;
-                                row[1] = user.FirstName;
-                                row[2] = user.LastName;
-                                row[3] = user.Email;
-                                row[4] = user.Password;
-                                dt.Rows.Add(row);
-                            }
+                            DataRow row = dt.NewRow();
+                            row[0] = rdr["Id"];
+                            row[1] = rdr["FirstName"].ToString();
+                            row[2] = rdr["LastName"].ToString();
+                            row[3] = rdr["Email"].ToString();
+                            row[4] = rdr["Password"].ToString();
+                            dt.Rows.Add(row);
                         }
+                        connect.Close();
                         rdr.Close();
                     }
                     scope.Complete();
@@ -98,11 +93,9 @@ namespace WpfApp1
             {
                 throw new Exception("Error transaction");
             }
-
-
             myDT.ItemsSource = dt.DefaultView;
-
         }
+
         public CRUDWindow()
         {
             InitializeComponent();
