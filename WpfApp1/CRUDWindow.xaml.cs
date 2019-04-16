@@ -31,20 +31,9 @@ namespace WpfApp1
 
         private void updateDT()
         {
-            //List<UserModel> userList = null;// _context
-                                            //.Users.Select(u => new UserModel
-                                            //{
-                                            //    Id = u.Id,
-                                            //    FirstName = u.FirstName,
-                                            //    LastName = u.LastName,
-                                            //    Email = u.Email,
-                                            //    Password = u.Password
-                                            //}).ToList();
-
             DataTable dt = new DataTable();
 
             DataColumn id = new DataColumn("id", typeof(int));
-            //id.Caption = "hello";
             DataColumn firstname = new DataColumn("firstname", typeof(string));
             DataColumn lastname = new DataColumn("lastname", typeof(string));
             DataColumn email = new DataColumn("email", typeof(string));
@@ -54,23 +43,11 @@ namespace WpfApp1
             dt.Columns.Add(lastname);
             dt.Columns.Add(email);
             dt.Columns.Add(password);
-            //foreach (var user in userList)
-            //{
-            //    DataRow row = dt.NewRow();
-            //    row[0] = user.Id;
-            //    row[1] = user.FirstName;
-            //    row[2] = user.LastName;
-            //    row[3] = user.Email;
-            //    row[4] = user.Password;
-            //    dt.Rows.Add(row);
-            //}
 
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    //using (SqlConnection connect = new SqlConnection(conStr))
-                    //{
                     _connect.Open();
                     SqlCommand cmd = new SqlCommand();
                     cmd.Connection = _connect;
@@ -85,7 +62,6 @@ namespace WpfApp1
                         row[3] = rdr["Email"].ToString();
                         row[4] = rdr["Password"].ToString();
                         dt.Rows.Add(row);
-                        //}
                     }
                     _connect.Close();
                     rdr.Close();
@@ -112,14 +88,6 @@ namespace WpfApp1
 
         private void Add_btn_Click(object sender, RoutedEventArgs e)
         {
-            //_context.Users.Add(new User
-            //{
-            //    FirstName = firstname_txtbx.Text,
-            //    LastName = lastname_txtbx.Text,
-            //    Email = email_txtbx.Text,
-            //    Password = password_txtbx.Text
-            //});
-            //_context.SaveChanges();
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -168,31 +136,6 @@ namespace WpfApp1
 
         private void Update_btn_Click(object sender, RoutedEventArgs e)
         {
-            //User upd = null;
-
-            //try
-            //{
-            //    upd = _context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First();
-
-            //    upd.FirstName = firstname_txtbx.Text;
-            //    upd.LastName = lastname_txtbx.Text;
-            //    upd.Email = email_txtbx.Text;
-            //    upd.Password = password_txtbx.Text;
-            //    _context.SaveChanges();
-
-            //    user_id_txtbx.Text = "";
-            //    email_txtbx.Text = "";
-            //    firstname_txtbx.Text = "";
-            //    lastname_txtbx.Text = "";
-            //    password_txtbx.Text = "";
-
-            //    myDT.DataContext = null;
-            //    MyDT_Loaded(sender, e);
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -226,24 +169,6 @@ namespace WpfApp1
 
         private void Delete_btn_Click(object sender, RoutedEventArgs e)
         {
-            //try
-            //{
-            //    _context.Users.Remove(_context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First());
-            //    _context.SaveChanges();
-
-            //    user_id_txtbx.Text = "";
-            //    email_txtbx.Text = "";
-            //    firstname_txtbx.Text = "";
-            //    lastname_txtbx.Text = "";
-            //    password_txtbx.Text = "";
-
-            //    myDT.DataContext = null;
-            //    MyDT_Loaded(sender, e);
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -277,16 +202,6 @@ namespace WpfApp1
 
         private void Resete_btn_Click(object sender, RoutedEventArgs e)
         {
-            //try
-            //{
-
-            //    _context.Users.RemoveRange(_context.Users.Where(u => u.Id.ToString() != null));
-            //    _context.SaveChanges();
-            //}
-            //catch (Exception ex)
-            //{
-            //    throw new Exception(ex.Message);
-            //}
             try
             {
                 using (TransactionScope scope = new TransactionScope())
