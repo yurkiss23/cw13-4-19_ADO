@@ -25,7 +25,10 @@ namespace WpfApp1
     /// </summary>
     public partial class CRUDWindow : Window
     {
-        public string conStr = ConfigurationManager.AppSettings["conStr"];
+        private string conStr = ConfigurationManager.AppSettings["conStr"];
+        private SqlConnection _connect;
+        public string Query { get; set; }
+
         private void updateDT()
         {
             //List<UserModel> userList = null;// _context
@@ -66,26 +69,26 @@ namespace WpfApp1
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    using (SqlConnection connect = new SqlConnection(conStr))
+                    //using (SqlConnection connect = new SqlConnection(conStr))
+                    //{
+                    _connect.Open();
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = _connect;
+                    cmd.CommandText = $"SELECT [Id],[FirstName],[LastName],[Email],[Password]FROM[yurkissdb].[dbo].[CRUD_Users]";
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
                     {
-                        connect.Open();
-                        SqlCommand cmd = new SqlCommand();
-                        cmd.Connection = connect;
-                        cmd.CommandText = $"SELECT [Id],[FirstName],[LastName],[Email],[Password]FROM[yurkissdb].[dbo].[CRUD_Users]";
-                        SqlDataReader rdr = cmd.ExecuteReader();
-                        while (rdr.Read())
-                        {
-                            DataRow row = dt.NewRow();
-                            row[0] = rdr["Id"];
-                            row[1] = rdr["FirstName"].ToString();
-                            row[2] = rdr["LastName"].ToString();
-                            row[3] = rdr["Email"].ToString();
-                            row[4] = rdr["Password"].ToString();
-                            dt.Rows.Add(row);
-                        }
-                        connect.Close();
-                        rdr.Close();
+                        DataRow row = dt.NewRow();
+                        row[0] = rdr["Id"];
+                        row[1] = rdr["FirstName"].ToString();
+                        row[2] = rdr["LastName"].ToString();
+                        row[3] = rdr["Email"].ToString();
+                        row[4] = rdr["Password"].ToString();
+                        dt.Rows.Add(row);
+                        //}
                     }
+                    _connect.Close();
+                    rdr.Close();
                     scope.Complete();
                 }
             }
@@ -99,6 +102,7 @@ namespace WpfApp1
         public CRUDWindow()
         {
             InitializeComponent();
+            _connect = new SqlConnection(conStr);
         }
 
         private void MyDT_Loaded(object sender, RoutedEventArgs e)
@@ -116,11 +120,21 @@ namespace WpfApp1
             //    Password = password_txtbx.Text
             //});
             //_context.SaveChanges();
+            string fn = firstname_txtbx.Text;
+            string ln = lastname_txtbx.Text;
+            string em = email_txtbx.Text;
+            string pw = password_txtbx.Text;
             try
             {
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    
+                    _connect.Open();
+                    Query = $"INSERT INTO [dbo].[CRUD_Users]([FirstName],[LastName],[Email],[Password])VALUES('{firstname_txtbx.Text}','{lastname_txtbx.Text}','{email_txtbx.Text}','{password_txtbx.Text}')";
+                    SqlCommand cmd = new SqlCommand(Query, _connect);
+                    int adding = cmd.ExecuteNonQuery();
+                    MessageBox.Show("add " + adding.ToString() + " user(s)");
+                    _connect.Close();
+                    scope.Complete();
                 }
             }
             catch
