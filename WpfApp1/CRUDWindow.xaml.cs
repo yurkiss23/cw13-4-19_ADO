@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,19 +25,18 @@ namespace WpfApp1
     /// </summary>
     public partial class CRUDWindow : Window
     {
-        private EFContext _context;
-
+        public string conStr = ConfigurationManager.AppSettings["conStr"];
         private void updateDT()
         {
-            List<UserModel> userList = _context
-                .Users.Select(u => new UserModel
-                {
-                    Id = u.Id,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email,
-                    Password = u.Password
-                }).ToList();
+            List<UserModel> userList = null;// _context
+                                            //.Users.Select(u => new UserModel
+                                            //{
+                                            //    Id = u.Id,
+                                            //    FirstName = u.FirstName,
+                                            //    LastName = u.LastName,
+                                            //    Email = u.Email,
+                                            //    Password = u.Password
+                                            //}).ToList();
 
             DataTable dt = new DataTable();
 
@@ -49,16 +51,54 @@ namespace WpfApp1
             dt.Columns.Add(lastname);
             dt.Columns.Add(email);
             dt.Columns.Add(password);
-            foreach (var user in userList)
+            //foreach (var user in userList)
+            //{
+            //    DataRow row = dt.NewRow();
+            //    row[0] = user.Id;
+            //    row[1] = user.FirstName;
+            //    row[2] = user.LastName;
+            //    row[3] = user.Email;
+            //    row[4] = user.Password;
+            //    dt.Rows.Add(row);
+            //}
+
+            try
             {
-                DataRow row = dt.NewRow();
-                row[0] = user.Id;
-                row[1] = user.FirstName;
-                row[2] = user.LastName;
-                row[3] = user.Email;
-                row[4] = user.Password;
-                dt.Rows.Add(row);
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    //string query = $"";
+                    using (SqlConnection connect = new SqlConnection(conStr))
+                    {
+                        connect.Open();
+                        SqlCommand cmd = new SqlCommand();
+                        cmd.Connection = connect;
+                        cmd.CommandText = $"SELECT [Id],[FirstName],[LastName],[Email],[Password]FROM[yurkissdb].[dbo].[CRUD_Users]";
+                        SqlDataReader rdr = cmd.ExecuteReader();
+                        MessageBox.Show(rdr.ToString());
+                        if (rdr.Read())
+                        {
+                            MessageBox.Show(rdr.ToString());
+                            foreach (var user in userList)
+                            {
+                                DataRow row = dt.NewRow();
+                                row[0] = user.Id;
+                                row[1] = user.FirstName;
+                                row[2] = user.LastName;
+                                row[3] = user.Email;
+                                row[4] = user.Password;
+                                dt.Rows.Add(row);
+                            }
+                        }
+                        rdr.Close();
+                    }
+                    scope.Complete();
+                }
             }
+            catch
+            {
+                throw new Exception("Error transaction");
+            }
+
 
             myDT.ItemsSource = dt.DefaultView;
 
@@ -66,7 +106,6 @@ namespace WpfApp1
         public CRUDWindow()
         {
             InitializeComponent();
-            _context = new EFContext();
         }
 
         private void MyDT_Loaded(object sender, RoutedEventArgs e)
@@ -76,14 +115,25 @@ namespace WpfApp1
 
         private void Add_btn_Click(object sender, RoutedEventArgs e)
         {
-            _context.Users.Add(new User
+            //_context.Users.Add(new User
+            //{
+            //    FirstName = firstname_txtbx.Text,
+            //    LastName = lastname_txtbx.Text,
+            //    Email = email_txtbx.Text,
+            //    Password = password_txtbx.Text
+            //});
+            //_context.SaveChanges();
+            try
             {
-                FirstName = firstname_txtbx.Text,
-                LastName = lastname_txtbx.Text,
-                Email = email_txtbx.Text,
-                Password = password_txtbx.Text
-            });
-            _context.SaveChanges();
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    
+                }
+            }
+            catch
+            {
+                throw new Exception("transaction fault");
+            }
             updateDT();
 
             email_txtbx.Text = "";
@@ -118,29 +168,29 @@ namespace WpfApp1
 
             User upd = null;
 
-            try
-            {
-                upd = _context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First();
+            //try
+            //{
+            //    upd = _context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First();
                 
-                upd.FirstName = firstname_txtbx.Text;
-                upd.LastName = lastname_txtbx.Text;
-                upd.Email = email_txtbx.Text;
-                upd.Password = password_txtbx.Text;
-                _context.SaveChanges();
+            //    upd.FirstName = firstname_txtbx.Text;
+            //    upd.LastName = lastname_txtbx.Text;
+            //    upd.Email = email_txtbx.Text;
+            //    upd.Password = password_txtbx.Text;
+            //    _context.SaveChanges();
 
-                user_id_txtbx.Text = "";
-                email_txtbx.Text = "";
-                firstname_txtbx.Text = "";
-                lastname_txtbx.Text = "";
-                password_txtbx.Text = "";
+            //    user_id_txtbx.Text = "";
+            //    email_txtbx.Text = "";
+            //    firstname_txtbx.Text = "";
+            //    lastname_txtbx.Text = "";
+            //    password_txtbx.Text = "";
 
-                myDT.DataContext = null;
-                MyDT_Loaded(sender, e);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    myDT.DataContext = null;
+            //    MyDT_Loaded(sender, e);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
             
             updateDT();
             add_btn.IsEnabled = false;
@@ -150,24 +200,24 @@ namespace WpfApp1
 
         private void Delete_btn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                _context.Users.Remove(_context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First());
-                _context.SaveChanges();
+            //try
+            //{
+            //    _context.Users.Remove(_context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First());
+            //    _context.SaveChanges();
 
-                user_id_txtbx.Text = "";
-                email_txtbx.Text = "";
-                firstname_txtbx.Text = "";
-                lastname_txtbx.Text = "";
-                password_txtbx.Text = "";
+            //    user_id_txtbx.Text = "";
+            //    email_txtbx.Text = "";
+            //    firstname_txtbx.Text = "";
+            //    lastname_txtbx.Text = "";
+            //    password_txtbx.Text = "";
 
-                myDT.DataContext = null;
-                MyDT_Loaded(sender, e);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    myDT.DataContext = null;
+            //    MyDT_Loaded(sender, e);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
 
             updateDT();
             add_btn.IsEnabled = false;
@@ -177,16 +227,16 @@ namespace WpfApp1
 
         private void Resete_btn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
+            //try
+            //{
 
-                _context.Users.RemoveRange(_context.Users.Where(u => u.Id.ToString() != null));
-                _context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            //    _context.Users.RemoveRange(_context.Users.Where(u => u.Id.ToString() != null));
+            //    _context.SaveChanges();
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new Exception(ex.Message);
+            //}
 
             updateDT();
 
