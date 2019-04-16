@@ -120,10 +120,6 @@ namespace WpfApp1
             //    Password = password_txtbx.Text
             //});
             //_context.SaveChanges();
-            string fn = firstname_txtbx.Text;
-            string ln = lastname_txtbx.Text;
-            string em = email_txtbx.Text;
-            string pw = password_txtbx.Text;
             try
             {
                 using (TransactionScope scope = new TransactionScope())
@@ -172,13 +168,12 @@ namespace WpfApp1
 
         private void Update_btn_Click(object sender, RoutedEventArgs e)
         {
-
-            User upd = null;
+            //User upd = null;
 
             //try
             //{
             //    upd = _context.Users.Where(u => u.Id.ToString() == user_id_txtbx.Text).First();
-                
+
             //    upd.FirstName = firstname_txtbx.Text;
             //    upd.LastName = lastname_txtbx.Text;
             //    upd.Email = email_txtbx.Text;
@@ -198,8 +193,32 @@ namespace WpfApp1
             //{
             //    throw new Exception(ex.Message);
             //}
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    _connect.Open();
+                    Query = $"UPDATE [dbo].[CRUD_Users]SET[FirstName] = '{firstname_txtbx.Text}',[LastName] = '{lastname_txtbx.Text}',[Email] = '{email_txtbx.Text}',[Password] = '{password_txtbx.Text}'WHERE[Id] = '{user_id_txtbx.Text}'";
+                    SqlCommand cmd = new SqlCommand(Query, _connect);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("update user");
+                    _connect.Close();
+                    scope.Complete();
+                }
+            }
+            catch
+            {
+                throw new Exception("transaction fault");
+            }
             
             updateDT();
+
+            user_id_txtbx.Text = "";
+            email_txtbx.Text = "";
+            firstname_txtbx.Text = "";
+            lastname_txtbx.Text = "";
+            password_txtbx.Text = "";
+
             add_btn.IsEnabled = false;
             delete_btn.IsEnabled = false;
             update_btn.IsEnabled = false;
