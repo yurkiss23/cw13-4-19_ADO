@@ -287,6 +287,23 @@ namespace WpfApp1
             //{
             //    throw new Exception(ex.Message);
             //}
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    _connect.Open();
+                    Query = $"DELETE FROM [dbo].[CRUD_Users]";
+                    SqlCommand cmd = new SqlCommand(Query, _connect);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("reset user");
+                    _connect.Close();
+                    scope.Complete();
+                }
+            }
+            catch
+            {
+                throw new Exception("transaction fault");
+            }
 
             updateDT();
 
