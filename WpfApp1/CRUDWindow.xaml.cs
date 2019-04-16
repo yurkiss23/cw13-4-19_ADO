@@ -244,8 +244,32 @@ namespace WpfApp1
             //{
             //    throw new Exception(ex.Message);
             //}
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    _connect.Open();
+                    Query = $"DELETE FROM [dbo].[CRUD_Users]WHERE[Id] = '{user_id_txtbx.Text}'";
+                    SqlCommand cmd = new SqlCommand(Query, _connect);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("delete user");
+                    _connect.Close();
+                    scope.Complete();
+                }
+            }
+            catch
+            {
+                throw new Exception("transaction fault");
+            }
 
             updateDT();
+
+            user_id_txtbx.Text = "";
+            email_txtbx.Text = "";
+            firstname_txtbx.Text = "";
+            lastname_txtbx.Text = "";
+            password_txtbx.Text = "";
+
             add_btn.IsEnabled = false;
             delete_btn.IsEnabled = false;
             update_btn.IsEnabled = false;
